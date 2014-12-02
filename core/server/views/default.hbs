@@ -37,6 +37,40 @@
 <body class="{{bodyClass}}" data-apps="{{apps}}" data-filestorage="{{file_storage}}" data-tagsui="{{tags_ui}}" data-blogurl="{{blog_url}}">
 
     {{{ghost_script_tags}}}
-
+    {{! Load and configure MathJax }}
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'],['\\(','\\)']]
+    }
+  });
+</script>
+<script>
+  var timeout,entry=document.getElementsByClassName('entry-markdown')[0];
+  function mathjaxify(){
+    var preview = document.getElementsByClassName('rendered-markdown')[0];
+    if (typeof(typeset)=='undefined' || typset == true){
+      MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
+      typesetStubbornMath();
+    }
+    function typesetStubbornMath(){
+      $('.MathJax_Preview').each(function(){
+        if($(this).text() != '') {
+          MathJax.Hub.Queue(['Typeset', MathJax.Hub, $(this).attr('id')]);
+        }
+      });
+    }
+  }
+  jQuery(document).keypress(function(e){
+    clearTimeout(timeout);
+    timeout = setTimeout(mathjaxify, 2001);
+  });
+  setTimeout(function(){
+    jQuery('.ember-view').click(function(){
+      mathjaxify();
+    });
+  },500);
+</script>
 </body>
 </html>
